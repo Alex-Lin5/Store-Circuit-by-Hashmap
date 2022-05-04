@@ -1,0 +1,12 @@
+.vscode
+.vs
+
+*.txt
+*.exe
+*.stackdump
+*.jpg
+*.png
+*.zip
+Project1
+
+// classnote/*

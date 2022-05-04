@@ -19,7 +19,8 @@
 #include <map>
 #include <cmath>
 #include <bitset>
-#include <time.h>
+#include <ctime>
+//#include <time.h>
 //#include <fmt/core.h>
 
 using namespace std;
@@ -96,35 +97,36 @@ ostream& operator<<(ostream& str, Circuit& const C);
 ostream& operator<<(ostream& str, TruthTable& const T);
 void test(Circuit* C);
 int main(){
+	srand(time(NULL));
 	Database* DB1 = new Database();
 
 	ifstream Cin("C:/MYFILE/CIS554/HW8_storeDLCby_hashmap/circuit.txt");
-	if (Cin.is_open()) cout << "opened\n";
-	else cout << "failed to open\n";
-	//string command;	
 
 	Circuit* C1 = new Circuit(Cin);
 	Circuit* C2 = new Circuit(Cin);
 	Circuit* C3 = new Circuit(Cin);
 	Circuit* R1 = new Circuit(3, 5);
+	Circuit* R2 = new Circuit(2, 2);
+
 	cout << *R1;
+	cout << *R2;
 	//test(C3);
 	//cout << *C1;
 	//cout << *C2;
 
 	Cin.close();
 	
-	DB1->Add(R1);
-	DB1->Delete(R1);
-	DB1->Add(R1);
-	DB1->Add(C1);
-	DB1->Add(C1);
-	DB1->Add(C2); // C1 == C3
-	DB1->Find(C1);
-	DB1->Find(C2);
-	DB1->Delete(C3);
-	DB1->Delete(C1);
-	cout << *DB1;
+	//DB1->Add(R1);
+	//DB1->Delete(R1);
+	//DB1->Add(R1);
+	//DB1->Add(C1);
+	//DB1->Add(C1);
+	//DB1->Add(C2); // C1 == C3
+	//DB1->Find(C1);
+	//DB1->Find(C2);
+	//DB1->Delete(C3);
+	//DB1->Delete(C1);
+	//cout << *DB1;
 	//delete DB1;
 
 	ofstream dataout("database.txt");
@@ -141,7 +143,7 @@ TruthTable::TruthTable(const int in, const int out) {
 	outputNum = out;
 	table = new list<list<bool>>();
 	toTable(generate());
-	permute(5);
+	permute(2);
 }
 
 TruthTable::TruthTable(list<string>* const tableString) {
@@ -284,6 +286,7 @@ list<string>* Circuit::fetchFile(ifstream& file) {
 	return tableStr;
 }
 Circuit::Circuit(const int in, const int out) {
+	//srand(time(NULL));
 	name = 'R' + to_string(rand() % 9000 + 1000); // 1000-9999
 	value = new TruthTable(in, out);
 	generateKey();
@@ -301,7 +304,11 @@ Circuit::Circuit(const string nameC, TruthTable* const &data){
 	generateKey();
 }
 Circuit::Circuit(ifstream& file){
-	key = "";
+	if (!file.is_open()) {
+		cout << "File is not open" << endl;
+		Circuit();
+		return;
+	}
 	list<string>* temp = fetchFile(file);
 	Add(temp);
 	generateKey();
