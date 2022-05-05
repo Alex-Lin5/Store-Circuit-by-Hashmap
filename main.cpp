@@ -23,15 +23,32 @@
 //#include <time.h>
 //#include <fmt/core.h>
 
+//#include "component.h"
+
 using namespace std;
+
+class Node {
+private:
+	shared_ptr<Node> right;
+	weak_ptr<Node> down;
+	bool value;
+public:
+	Node(){ value = NULL;}
+	Node(bool data){ value = data;}
+	//~Node(){ value = NULL;}
+	bool get(){ return value;}
+};
 
 class TruthTable {
 private:
 	list<list<bool>>* table;
+	//shared_ptr<Node> Entry;
 	int inputNum;
 	int outputNum;
 
 	list<string>* generate();
+	void permuteRow();
+	void permuteCol();
 	void permute(int num);
 	void toTable(list<string>* const tableString);
 
@@ -43,6 +60,9 @@ public:
 	list<list<bool>>* getTable() { return table;}
 	int getIn() { return inputNum; }
 	int getOut() { return outputNum; }
+	vector<bool>* getRow();
+	vector<bool>* getCol();
+	bool get(int row, int col);
 };
 
 class Circuit {
@@ -68,10 +88,12 @@ public:
 	TruthTable* getValue() { return value;}
 };
 
+typedef unordered_map<string, Circuit*> hashMap;
+
 class Database {
 private:
-	unordered_map<string, Circuit*>* warehouse;
-	//hashMap* warehouse;
+	//unordered_map<string, Circuit*>* warehouse;
+	hashMap* warehouse;
 	int circuitNum;
 
 	bool checkNull(Circuit* const& C);
@@ -90,7 +112,6 @@ public:
 	
 };
 
-typedef unordered_map<string, Circuit*> hashMap;
 
 ostream& operator<<(ostream& str, Database& const DB);
 ostream& operator<<(ostream& str, Circuit& const C);
@@ -179,23 +200,23 @@ list<string>* TruthTable::generate() {
 	int eint, inbound, outbound;
 	string lineStr, buffer;
 	list<string>* tableStr = new list<string>();
-	
+
 	inbound = pow(2, inputNum);
 	outbound = pow(2, outputNum);
-	for (int i=0; i<inbound; i++) {
+	for (int i = 0; i < inbound; i++) {
 		lineStr = "";
 		eint = rand() % outbound;
 		buffer = bitset<1024>(i).to_string();
-		for (int j=0; j<inputNum; j++)
+		for (int j = 0; j < inputNum; j++)
 			lineStr += buffer.at(1024 - inputNum + j);
 		buffer = bitset<1024>(eint).to_string();
-		for (int j=0; j<outputNum; j++)
+		for (int j = 0; j < outputNum; j++)
 			lineStr += buffer.at(1024 - outputNum + j);
 		tableStr->insert(tableStr->end(), lineStr);
 	}
 	return tableStr;
 }
-void TruthTable::permute(int num){
+void TruthTable::permute(int num) {
 	int line1, line2;
 	int inbound;
 	inbound = pow(2, inputNum);
@@ -207,12 +228,12 @@ void TruthTable::permute(int num){
 			line2 = rand() % inbound;
 		} while (line1 == line2);
 		auto itr1 = table->begin();
-		for(int i=0; i<line1; i++)
+		for (int i = 0; i < line1; i++)
 			itr1++;
-		auto itr2{table->begin()};
-		for(int i=0; i<line2; i++)
+		auto itr2{ table->begin() };
+		for (int i = 0; i < line2; i++)
 			itr2++;
-		(* itr1).swap(*itr2);
+		(*itr1).swap(*itr2);
 	}
 }
 
@@ -441,80 +462,3 @@ void Database::Delete(Circuit*& const C) {
 
 	cout << endl;
 }
-//// You need to implement overloaded operator<< to facilitate printing a circuit (See the possible
-//// output messages below.)
-//// Input file “input.txt”, with the following format.
-//// 25//number of database operations, such as Add, Find, or Delete
-//// Add
-//// Circuit_1
-//// 3//number of inputs
-//// 2//number of outputs
-//// 000 10
-//// 001 00
-//// 010 00
-//// 011 10
-//// 100 00
-//// 101 11
-//// 110 01
-//// 111 11
-//// Add
-//// Circuit_2
-//// 4
-//// 2
-//// 0000 01
-//// 0001 11
-//// 0010 00
-//// …
-//// Find
-//// Circuit_3
-//// ….
-//// Delete
-//// Circuit_8
-//// …
-//// Add
-//// Circuit 20
-//// …
-//// Possible output messages for “add” are in the following:
-//// Circuit 4 is added to the database.
-//// Circuit 4 is not added. It has a re-useable circuit, Circuit 1, in the database, whose truth table is
-//// shown below.
-//// Circuit_1
-//// 3
-//// 2
-//// 000 10
-//// 001 00
-//// 010 00
-//// 011 10
-//// 100 00
-//// 101 11
-//// 110 01
-//// 111 11
-//// Possible output messages for “find” are in the following:
-//// Circuit 4 does not have any re-useable circuit in the database.
-//// Circuit 4 has a re-useable circuit, Circuit 1, in the database, whose truth table is shown below.
-//// Circuit_1
-//// 3
-//// 2
-//// 000 10
-//// 001 00
-//// 010 00
-//// 011 10
-//// 100 00
-//// 101 11
-//// 110 01
-//// 111 11
-//// Possible output messages for “delete” are in the following.
-//// Circuit 4 does not have any re-useable circuit in the database.
-//// Circuit 4 has a re-useable circuit, Circuit 1, in the database, whose truth table is shown below
-//// and Circuit 1 is deleted from the database.
-//// Circuit_1
-//// 3
-//// 2
-//// 000 10
-//// 001 00
-//// 010 00
-//// 011 10
-//// 100 00
-//// 101 11
-//// 110 01
-//// 111 11
