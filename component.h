@@ -8,9 +8,26 @@
 #include <bitset>
 #include <ctime>
 
+class Node {
+private:
+	shared_ptr<Node> right;
+	weak_ptr<Node> down;
+	bool value;
+public:
+	Node(){ value = NULL;}
+	Node(bool data){ value = data; right.reset(); down.reset(); }
+	//~Node(){ value = NULL;}
+	bool get(){ return value;}
+	void setR(shared_ptr<Node> theNode) { this->right = theNode; }
+	void setD(shared_ptr<Node> theNode) { this->down = theNode; }
+	shared_ptr<Node> getR() { return right; }
+	shared_ptr<Node> getD() { return down.lock(); }
+};
+
+//template<class T>
 class TruthTable {
 private:
-	list<list<bool>>* table;
+	shared_ptr<Node> entry;
 	int inputNum;
 	int outputNum;
 
@@ -19,16 +36,54 @@ private:
 	void permuteCol();
 	void permute(int num);
 	void toTable(list<string>* const tableString);
+	template<class T> bool check(const T value);
+	template<typename T> void initialize(T& const itrB, const T& itrE);
 
 public:
 	TruthTable();
+	TruthTable(const initializer_list<int>& L);
 	TruthTable(list<string>* const tableString);
 	TruthTable (const int in, const int out);
-	~TruthTable();
-	list<list<bool>>* getTable();
-	int getIn();
+	~TruthTable() { entry.reset(); }
+	TruthTable(const TruthTable& T);
+	void operator=(const TruthTable& T);
+
+	shared_ptr<Node> getEntry() { return entry;}
+	int getIn() { return inputNum; }
 	int getOut() { return outputNum; }
-	vector<bool>* getRow();
-	vector<bool>* getCol();
-	bool get(int row, int col);
+	vector<bool> getRow(const int num);
+	vector<bool> getCol(const int num);
+	//void setEntry(shared_ptr<Node> node) { entry = node;}
+	//bool get(int row, int col);
+};
+
+class Circuit {
+private:
+	string name;
+	string key;
+	TruthTable* value;
+
+	list<string>* fetchFile(ifstream& file);
+	void Add (TruthTable* const data) { value = data;}
+	void Add (list<string>* const tableString) {
+		value = new TruthTable(tableString);
+	}
+	void generateKey();
+public:	
+	Circuit();
+	Circuit(const initializer_list<int>& L);
+	Circuit(const int in, const int out);
+	Circuit(const string nameC, TruthTable* const &data);
+	Circuit(ifstream& file);
+	~Circuit(){ delete value;}
+	Circuit(const Circuit& C);
+	void operator=(const Circuit& C);
+	Circuit(Circuit &&C);
+	void operator=(Circuit &&C);
+
+	Circuit invert();
+	template<class Comp> void sort(Comp functor);
+	string getName() { return name;}
+	string getKey() { return key;}
+	TruthTable* getValue() { return value;}
 };

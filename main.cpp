@@ -16,12 +16,10 @@
 #include <string>
 #include <unordered_map>
 #include <list>
-//#include <initializer_list>
 #include <map>
 #include <cmath>
 #include <bitset>
 #include <ctime>
-//#include <time.h>
 //#include <fmt/core.h>
 
 //#include "component.h"
@@ -65,11 +63,15 @@ public:
 	TruthTable(list<string>* const tableString);
 	TruthTable (const int in, const int out);
 	~TruthTable() { entry.reset(); }
+	TruthTable(const TruthTable& T);
+	void operator=(const TruthTable& T);
+
 	shared_ptr<Node> getEntry() { return entry;}
 	int getIn() { return inputNum; }
 	int getOut() { return outputNum; }
-	vector<bool>* getRow(const int num);
-	vector<bool>* getCol(const int num);
+	vector<bool> getRow(const int num);
+	vector<bool> getCol(const int num);
+	//void setEntry(shared_ptr<Node> node) { entry = node;}
 	//bool get(int row, int col);
 };
 
@@ -92,6 +94,13 @@ public:
 	Circuit(const string nameC, TruthTable* const &data);
 	Circuit(ifstream& file);
 	~Circuit(){ delete value;}
+	Circuit(const Circuit& C);
+	void operator=(const Circuit& C);
+	Circuit(Circuit &&C);
+	void operator=(Circuit &&C);
+
+	Circuit invert();
+	template<class Comp> void sort(Comp functor);
 	string getName() { return name;}
 	string getKey() { return key;}
 	TruthTable* getValue() { return value;}
@@ -174,14 +183,24 @@ void test() {
 	};
 	Circuit* I1 = new Circuit(data);
 	cout << *I1;
+	Circuit C1;
+	C1 = *I1;
+	cout << C1;
+	Circuit* C2 = new Circuit(*I1);
+	cout << *C2;
+
+	Circuit M1;
+	M1 = I1->invert();
+	cout << M1;
 
 	Circuit* R1 = new Circuit(2, 8);
 	cout << *R1;
+	Circuit* D1 = new Circuit();
+	cout << *D1;
 
 
 }
 TruthTable::TruthTable(){ 
-	//table = new list<list<bool>>{}; 
 	entry = make_shared<Node>();
 	inputNum = outputNum = 0; 
 	cout << "Default constructor\n";
@@ -190,7 +209,6 @@ TruthTable::TruthTable(){
 TruthTable::TruthTable(const int in, const int out) {
 	inputNum = in;
 	outputNum = out;
-	//table = new list<list<bool>>();
 	toTable(generate());
 	//permute(2);
 }
@@ -207,22 +225,45 @@ TruthTable::TruthTable(const initializer_list<int>& L) {
 }
 
 TruthTable::TruthTable(list<string>* const tableString) {
-	//table = new list<list<bool>>();
 	toTable(tableString);
+}
+void TruthTable::operator=(const TruthTable& T) {
+	//*this = new TruthTable(T);
+	//TruthTable(T);
+	inputNum = T.inputNum;
+	outputNum = T.outputNum;
+	vector<bool> table;
+	auto pt{ T.entry };
+	while (pt != nullptr) {
+		table.push_back(pt->get());
+		pt = pt->getR();
+	}
+	auto itr1{ table.begin() };
+	auto itr2{ table.end() };
+	initialize(itr1, --itr2);
+}
+
+TruthTable::TruthTable(const TruthTable& T) {
+	inputNum = T.inputNum;
+	outputNum = T.outputNum;
+	vector<bool> table;
+	auto pt{T.entry};
+	while (pt != nullptr) {
+		table.push_back(pt->get());
+		pt = pt->getR();
+	}
+	auto itr1{ table.begin() };
+	auto itr2{ table.end() };
+	initialize(itr1, --itr2);
 }
 
 template<typename T> void TruthTable::initialize(T& const itrB, const T& itrE) {
 	int index{ 0 };
 	int lineWidth{ inputNum + outputNum };
-	//auto itr{L.begin};
 	shared_ptr<Node> pre{ nullptr }, above{ nullptr };
-	//"0000 1010 1110"
 	while (itrB <= itrE) {
-		//while (itrB != L.end()) {
 		shared_ptr<Node> node = make_shared<Node>(check(*itrB));
 		itrB++;
-		//if (itrB == itrE) ;
-		//else itrB++;
 		//shared_ptr<Node> node = make_shared<Node>(check(*(itrB++)));
 		if (index == 0) {
 			entry = node;
@@ -243,33 +284,45 @@ template<typename T> void TruthTable::initialize(T& const itrB, const T& itrE) {
 	pre->setR(nullptr);
 
 }
-vector<bool>* TruthTable::getRow(const int num) {
-	vector<bool>* row = new vector<bool>();
-	if ((num >= 0) && num < (pow(2, inputNum))) {
-		auto pt{ entry };
+vector<bool> TruthTable::getRow(const int num) {
+	vector<bool> row;
+	//auto power = [&, inputNum](int p) { for (int i = 0; i < p; i++) result *= inputNum; };
+	auto power2 = [&]() { int result{1}; 
+	for (int i = 0; i < inputNum; i++) result *= 2;
+	return result;};
+	if (num >= 0 && num < power2()) {
+			auto pt{ entry };
 		for (int i = 0; i < num; i++)
 			pt->getD();
 		for (int i = 0; i < inputNum + outputNum; i++) {
-			row->push_back(pt->get());
+			row.push_back(pt->get());
 			pt = pt->getR();
 		}
 	}
 	else
-		cout << "Input out of bound\n";
+		cout << "Input of row out of bound\n";
 	return row;
 }
 
-vector<bool>* TruthTable::getCol(const int num) {
-	vector<bool>* col = new vector<bool>();
+vector<bool> TruthTable::getCol(const int num) {
+	//vector<bool>* col = new vector<bool>();
+	vector<bool> col;
+	int result{1};
+	auto power = [&result](int base, int power) { 
+		for (int i = 0; i < power; i++) return result *= base; };
+
 	if ((num >= 0) && num < (inputNum + outputNum)) {
 		auto pt{ entry };
 		for (int i = 0; i < num; i++)
 			pt->getR();
-		for (int i = 0; i < pow(2, inputNum); i++) {
-			col->push_back(pt->get());
+		for (int i = 0; i < power(2, inputNum); i++) {
+			//for (int i = 0; i < pow(2, inputNum); i++) {
+				col.push_back(pt->get());
 			pt->getD();
 		}
 	}
+	else
+		cout << "Input of column out of bound\n";
 	return col;
 }
 
@@ -342,6 +395,64 @@ void TruthTable::permute(int num) {
 	//}
 }
 
+Circuit::Circuit(const Circuit& C) {
+	if (&C != this) {
+		if (this->value != nullptr)
+			delete value;
+		name = "CC" + C.name;
+		key = C.key;
+		value = new TruthTable(*(C.value));
+	}
+	else
+		cout << "construct by itself\n";
+	cout << "copy constrctor\n";
+}
+void Circuit::operator=(const Circuit& C) {
+	if (&C != this) {
+		if (this->value != nullptr)
+			delete value;
+		name = "CA" + C.name;
+		key = C.key;
+		value = new TruthTable(*(C.value));
+	}
+	else
+		cout << "Assign to itself\n";
+	cout << "copy assignment\n";
+}
+Circuit::Circuit(Circuit&& C) {
+	if (&C != this) {
+		if (this->value != nullptr) {
+			delete value;
+		}
+		name = "MC" + C.name;
+		key = C.key;
+		value = C.value;
+		C.value = nullptr;
+	}
+	else
+		cout << "construct by itself\n";
+	cout << "move constructor\n";
+}
+void Circuit::operator=(Circuit&& C) {
+	if (&C != this) {
+		if (this->value != nullptr) {
+			delete value;
+		}
+		name = "MA" + C.name;
+		key = C.key;
+		value = C.value;
+		C.value = nullptr;
+	}
+	else
+		cout << "Assign to itself\n";
+	cout << "move assignment\n";
+
+}
+Circuit Circuit::invert() {
+	Circuit tp{*this};
+	return move(tp);
+}
+
 void Circuit::generateKey(){
 	string object{""};
 	map<int, map<int, int>> keyMap;
@@ -354,7 +465,7 @@ void Circuit::generateKey(){
 	// counting 1s
 	int inputCount{0}, outputCount{0}, repetition;
 	for (int j=0; j<pow(2, value->getIn()); j++) {
-		auto line = *(value->getRow(j));
+		auto line = value->getRow(j);
 		int i = 0;
 		inputCount = 0;
 		outputCount = 0;
@@ -417,7 +528,7 @@ Circuit::Circuit(const int in, const int out) {
 }
 
 Circuit::Circuit() {
-	name = "default name";
+	name = "D0000";
 	key = "";
 	value = new TruthTable();
 }
