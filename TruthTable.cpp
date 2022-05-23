@@ -8,7 +8,7 @@
 #include <bitset>
 #include <ctime>
 
-#include "component.h"
+#include "TruthTable.h"
 using namespace std;
 
 TruthTable::TruthTable(){ 

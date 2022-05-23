@@ -23,88 +23,90 @@
 //#include <fmt/core.h>
 
 //#include "component.h"
+#include "Circuit.h"
+#include "TruthTable.h"
 
 using namespace std;
 
-class Node {
-private:
-	shared_ptr<Node> right;
-	weak_ptr<Node> down;
-	bool value;
-public:
-	Node(){ value = NULL;}
-	Node(bool data){ value = data; right.reset(); down.reset(); }
-	//~Node(){ value = NULL;}
-	bool get(){ return value;}
-	void setR(shared_ptr<Node> theNode) { this->right = theNode; }
-	void setD(shared_ptr<Node> theNode) { this->down = theNode; }
-	shared_ptr<Node> getR() { return right; }
-	shared_ptr<Node> getD() { return down.lock(); }
-};
+// class Node {
+// private:
+// 	shared_ptr<Node> right;
+// 	weak_ptr<Node> down;
+// 	bool value;
+// public:
+// 	Node(){ value = NULL;}
+// 	Node(bool data){ value = data; right.reset(); down.reset(); }
+// 	//~Node(){ value = NULL;}
+// 	bool get(){ return value;}
+// 	void setR(shared_ptr<Node> theNode) { this->right = theNode; }
+// 	void setD(shared_ptr<Node> theNode) { this->down = theNode; }
+// 	shared_ptr<Node> getR() { return right; }
+// 	shared_ptr<Node> getD() { return down.lock(); }
+// };
 
-//template<class T>
-class TruthTable {
-private:
-	shared_ptr<Node> entry;
-	int inputNum;
-	int outputNum;
+// //template<class T>
+// class TruthTable {
+// private:
+// 	shared_ptr<Node> entry;
+// 	int inputNum;
+// 	int outputNum;
 
-	list<string>* generate();
-	void permuteRow();
-	void permuteCol();
-	void permute(int num);
-	void toTable(list<string>* const tableString);
-	template<class T> bool check(const T value);
-	template<typename T> void initialize(T& const itrB, const T& itrE);
+// 	list<string>* generate();
+// 	void permuteRow();
+// 	void permuteCol();
+// 	void permute(int num);
+// 	void toTable(list<string>* const tableString);
+// 	template<class T> bool check(const T value);
+// 	template<typename T> void initialize(T& const itrB, const T& itrE);
 
-public:
-	TruthTable();
-	TruthTable(const initializer_list<int>& L);
-	TruthTable(list<string>* const tableString);
-	TruthTable (const int in, const int out);
-	~TruthTable() { entry.reset(); }
-	TruthTable(const TruthTable& T);
-	void operator=(const TruthTable& T);
+// public:
+// 	TruthTable();
+// 	TruthTable(const initializer_list<int>& L);
+// 	TruthTable(list<string>* const tableString);
+// 	TruthTable (const int in, const int out);
+// 	~TruthTable() { entry.reset(); }
+// 	TruthTable(const TruthTable& T);
+// 	void operator=(const TruthTable& T);
 
-	shared_ptr<Node> getEntry() { return entry;}
-	int getIn() { return inputNum; }
-	int getOut() { return outputNum; }
-	vector<bool> getRow(const int num);
-	vector<bool> getCol(const int num);
-	//void setEntry(shared_ptr<Node> node) { entry = node;}
-	//bool get(int row, int col);
-};
+// 	shared_ptr<Node> getEntry() { return entry;}
+// 	int getIn() { return inputNum; }
+// 	int getOut() { return outputNum; }
+// 	vector<bool> getRow(const int num);
+// 	vector<bool> getCol(const int num);
+// 	//void setEntry(shared_ptr<Node> node) { entry = node;}
+// 	//bool get(int row, int col);
+// };
 
-class Circuit {
-private:
-	string name;
-	string key;
-	TruthTable* value;
+// class Circuit {
+// private:
+// 	string name;
+// 	string key;
+// 	TruthTable* value;
 
-	list<string>* fetchFile(ifstream& file);
-	void Add (TruthTable* const data) { value = data;}
-	void Add (list<string>* const tableString) {
-		value = new TruthTable(tableString);
-	}
-	void generateKey();
-public:	
-	Circuit();
-	Circuit(const initializer_list<int>& L);
-	Circuit(const int in, const int out);
-	Circuit(const string nameC, TruthTable* const &data);
-	Circuit(ifstream& file);
-	~Circuit(){ delete value;}
-	Circuit(const Circuit& C);
-	void operator=(const Circuit& C);
-	Circuit(Circuit &&C);
-	void operator=(Circuit &&C);
+// 	list<string>* fetchFile(ifstream& file);
+// 	void Add (TruthTable* const data) { value = data;}
+// 	void Add (list<string>* const tableString) {
+// 		value = new TruthTable(tableString);
+// 	}
+// 	void generateKey();
+// public:	
+// 	Circuit();
+// 	Circuit(const initializer_list<int>& L);
+// 	Circuit(const int in, const int out);
+// 	Circuit(const string nameC, TruthTable* const &data);
+// 	Circuit(ifstream& file);
+// 	~Circuit(){ delete value;}
+// 	Circuit(const Circuit& C);
+// 	void operator=(const Circuit& C);
+// 	Circuit(Circuit &&C);
+// 	void operator=(Circuit &&C);
 
-	Circuit invert();
-	template<class Comp> void sort(Comp functor);
-	string getName() { return name;}
-	string getKey() { return key;}
-	TruthTable* getValue() { return value;}
-};
+// 	Circuit invert();
+// 	template<class Comp> void sort(Comp functor);
+// 	string getName() { return name;}
+// 	string getKey() { return key;}
+// 	TruthTable* getValue() { return value;}
+// };
 
 typedef unordered_map<string, Circuit*> hashMap;
 
@@ -200,354 +202,354 @@ void test() {
 
 
 }
-TruthTable::TruthTable(){ 
-	entry = make_shared<Node>();
-	inputNum = outputNum = 0; 
-	cout << "Default constructor\n";
-}
+// TruthTable::TruthTable(){ 
+// 	entry = make_shared<Node>();
+// 	inputNum = outputNum = 0; 
+// 	cout << "Default constructor\n";
+// }
 
-TruthTable::TruthTable(const int in, const int out) {
-	inputNum = in;
-	outputNum = out;
-	toTable(generate());
-	//permute(2);
-}
+// TruthTable::TruthTable(const int in, const int out) {
+// 	inputNum = in;
+// 	outputNum = out;
+// 	toTable(generate());
+// 	//permute(2);
+// }
 
-TruthTable::TruthTable(const initializer_list<int>& L) {
-	if (L.size() < 1){
-		TruthTable();
-		return;
-	} 
-	auto itr{L.begin()};
-	inputNum = *itr;
-	outputNum = *(++itr);
-	initialize(++itr, L.end());
-}
+// TruthTable::TruthTable(const initializer_list<int>& L) {
+// 	if (L.size() < 1){
+// 		TruthTable();
+// 		return;
+// 	} 
+// 	auto itr{L.begin()};
+// 	inputNum = *itr;
+// 	outputNum = *(++itr);
+// 	initialize(++itr, L.end());
+// }
 
-TruthTable::TruthTable(list<string>* const tableString) {
-	toTable(tableString);
-}
-void TruthTable::operator=(const TruthTable& T) {
-	//*this = new TruthTable(T);
-	//TruthTable(T);
-	inputNum = T.inputNum;
-	outputNum = T.outputNum;
-	vector<bool> table;
-	auto pt{ T.entry };
-	while (pt != nullptr) {
-		table.push_back(pt->get());
-		pt = pt->getR();
-	}
-	auto itr1{ table.begin() };
-	auto itr2{ table.end() };
-	initialize(itr1, --itr2);
-}
+// TruthTable::TruthTable(list<string>* const tableString) {
+// 	toTable(tableString);
+// }
+// void TruthTable::operator=(const TruthTable& T) {
+// 	//*this = new TruthTable(T);
+// 	//TruthTable(T);
+// 	inputNum = T.inputNum;
+// 	outputNum = T.outputNum;
+// 	vector<bool> table;
+// 	auto pt{ T.entry };
+// 	while (pt != nullptr) {
+// 		table.push_back(pt->get());
+// 		pt = pt->getR();
+// 	}
+// 	auto itr1{ table.begin() };
+// 	auto itr2{ table.end() };
+// 	initialize(itr1, --itr2);
+// }
 
-TruthTable::TruthTable(const TruthTable& T) {
-	inputNum = T.inputNum;
-	outputNum = T.outputNum;
-	vector<bool> table;
-	auto pt{T.entry};
-	while (pt != nullptr) {
-		table.push_back(pt->get());
-		pt = pt->getR();
-	}
-	auto itr1{ table.begin() };
-	auto itr2{ table.end() };
-	initialize(itr1, --itr2);
-}
+// TruthTable::TruthTable(const TruthTable& T) {
+// 	inputNum = T.inputNum;
+// 	outputNum = T.outputNum;
+// 	vector<bool> table;
+// 	auto pt{T.entry};
+// 	while (pt != nullptr) {
+// 		table.push_back(pt->get());
+// 		pt = pt->getR();
+// 	}
+// 	auto itr1{ table.begin() };
+// 	auto itr2{ table.end() };
+// 	initialize(itr1, --itr2);
+// }
 
-template<typename T> void TruthTable::initialize(T& const itrB, const T& itrE) {
-	int index{ 0 };
-	int lineWidth{ inputNum + outputNum };
-	shared_ptr<Node> pre{ nullptr }, above{ nullptr };
-	while (itrB <= itrE) {
-		shared_ptr<Node> node = make_shared<Node>(check(*itrB));
-		itrB++;
-		//shared_ptr<Node> node = make_shared<Node>(check(*(itrB++)));
-		if (index == 0) {
-			entry = node;
-			pre = node;
-			above = node;
-			index++;
-			continue;
-		}
-		else if (index < lineWidth);
-		else if (index >= lineWidth) {
-			above->setD(node);
-			above = above->getR();
-		}
-		pre->setR(node);
-		pre = node;
-		index++;
-	}
-	pre->setR(nullptr);
+// template<typename T> void TruthTable::initialize(T& const itrB, const T& itrE) {
+// 	int index{ 0 };
+// 	int lineWidth{ inputNum + outputNum };
+// 	shared_ptr<Node> pre{ nullptr }, above{ nullptr };
+// 	while (itrB <= itrE) {
+// 		shared_ptr<Node> node = make_shared<Node>(check(*itrB));
+// 		itrB++;
+// 		//shared_ptr<Node> node = make_shared<Node>(check(*(itrB++)));
+// 		if (index == 0) {
+// 			entry = node;
+// 			pre = node;
+// 			above = node;
+// 			index++;
+// 			continue;
+// 		}
+// 		else if (index < lineWidth);
+// 		else if (index >= lineWidth) {
+// 			above->setD(node);
+// 			above = above->getR();
+// 		}
+// 		pre->setR(node);
+// 		pre = node;
+// 		index++;
+// 	}
+// 	pre->setR(nullptr);
 
-}
-vector<bool> TruthTable::getRow(const int num) {
-	vector<bool> row;
-	//auto power = [&, inputNum](int p) { for (int i = 0; i < p; i++) result *= inputNum; };
-	auto power2 = [&]() { int result{1}; 
-	for (int i = 0; i < inputNum; i++) result *= 2;
-	return result;};
-	if (num >= 0 && num < power2()) {
-			auto pt{ entry };
-		for (int i = 0; i < num; i++)
-			pt->getD();
-		for (int i = 0; i < inputNum + outputNum; i++) {
-			row.push_back(pt->get());
-			pt = pt->getR();
-		}
-	}
-	else
-		cout << "Input of row out of bound\n";
-	return row;
-}
+// }
+// vector<bool> TruthTable::getRow(const int num) {
+// 	vector<bool> row;
+// 	//auto power = [&, inputNum](int p) { for (int i = 0; i < p; i++) result *= inputNum; };
+// 	auto power2 = [&]() { int result{1}; 
+// 	for (int i = 0; i < inputNum; i++) result *= 2;
+// 	return result;};
+// 	if (num >= 0 && num < power2()) {
+// 			auto pt{ entry };
+// 		for (int i = 0; i < num; i++)
+// 			pt->getD();
+// 		for (int i = 0; i < inputNum + outputNum; i++) {
+// 			row.push_back(pt->get());
+// 			pt = pt->getR();
+// 		}
+// 	}
+// 	else
+// 		cout << "Input of row out of bound\n";
+// 	return row;
+// }
 
-vector<bool> TruthTable::getCol(const int num) {
-	//vector<bool>* col = new vector<bool>();
-	vector<bool> col;
-	int result{1};
-	auto power = [&result](int base, int power) { 
-		for (int i = 0; i < power; i++) return result *= base; };
+// vector<bool> TruthTable::getCol(const int num) {
+// 	//vector<bool>* col = new vector<bool>();
+// 	vector<bool> col;
+// 	int result{1};
+// 	auto power = [&result](int base, int power) { 
+// 		for (int i = 0; i < power; i++) return result *= base; };
 
-	if ((num >= 0) && num < (inputNum + outputNum)) {
-		auto pt{ entry };
-		for (int i = 0; i < num; i++)
-			pt->getR();
-		for (int i = 0; i < power(2, inputNum); i++) {
-			//for (int i = 0; i < pow(2, inputNum); i++) {
-				col.push_back(pt->get());
-			pt->getD();
-		}
-	}
-	else
-		cout << "Input of column out of bound\n";
-	return col;
-}
+// 	if ((num >= 0) && num < (inputNum + outputNum)) {
+// 		auto pt{ entry };
+// 		for (int i = 0; i < num; i++)
+// 			pt->getR();
+// 		for (int i = 0; i < power(2, inputNum); i++) {
+// 			//for (int i = 0; i < pow(2, inputNum); i++) {
+// 				col.push_back(pt->get());
+// 			pt->getD();
+// 		}
+// 	}
+// 	else
+// 		cout << "Input of column out of bound\n";
+// 	return col;
+// }
 
-template<class T> bool TruthTable::check(const T value) {
-	if (value == 1 || value == '1')
-		return true;
-	else if (value == 0 || value == '0')
-		return false;
-	else return NULL;
-}
+// template<class T> bool TruthTable::check(const T value) {
+// 	if (value == 1 || value == '1')
+// 		return true;
+// 	else if (value == 0 || value == '0')
+// 		return false;
+// 	else return NULL;
+// }
 
-void TruthTable::toTable(list<string>* const tableString) {
-	inputNum = log2(tableString->size());
-	outputNum = (*tableString->begin()).size() - inputNum;
+// void TruthTable::toTable(list<string>* const tableString) {
+// 	inputNum = log2(tableString->size());
+// 	outputNum = (*tableString->begin()).size() - inputNum;
 
-	string whole{""};
-	auto itr{tableString->begin()};
-	auto itrE{tableString->end()};
-	while (itr != itrE) {
-		whole += *(itr++);
-	}
-	whole += " ";
-	auto itr1{ whole.begin() };
-	auto itr2{ whole.end() };
-	initialize(itr1, --itr2);
-}
+// 	string whole{""};
+// 	auto itr{tableString->begin()};
+// 	auto itrE{tableString->end()};
+// 	while (itr != itrE) {
+// 		whole += *(itr++);
+// 	}
+// 	whole += " ";
+// 	auto itr1{ whole.begin() };
+// 	auto itr2{ whole.end() };
+// 	initialize(itr1, --itr2);
+// }
 
-list<string>* TruthTable::generate() {
-	//name = fmt::format("{:x}", 32);
-	//name = std::format("{:x}", 32);
-	//std::stringstream streamH;
-	//streamH << std::hex << 32;
+// list<string>* TruthTable::generate() {
+// 	//name = fmt::format("{:x}", 32);
+// 	//name = std::format("{:x}", 32);
+// 	//std::stringstream streamH;
+// 	//streamH << std::hex << 32;
 
-	int eint, inbound, outbound;
-	string lineStr, buffer;
-	list<string>* tableStr = new list<string>();
+// 	int eint, inbound, outbound;
+// 	string lineStr, buffer;
+// 	list<string>* tableStr = new list<string>();
 
-	inbound = pow(2, inputNum);
-	outbound = pow(2, outputNum);
-	for (int i = 0; i < inbound; i++) {
-		lineStr = "";
-		eint = rand() % outbound;
-		buffer = bitset<1024>(i).to_string();
-		for (int j = 0; j < inputNum; j++)
-			lineStr += buffer.at(1024 - inputNum + j);
-		buffer = bitset<1024>(eint).to_string();
-		for (int j = 0; j < outputNum; j++)
-			lineStr += buffer.at(1024 - outputNum + j);
-		tableStr->insert(tableStr->end(), lineStr);
-	}
-	return tableStr;
-}
-void TruthTable::permute(int num) {
-	int line1, line2;
-	int inbound;
-	inbound = pow(2, inputNum);
+// 	inbound = pow(2, inputNum);
+// 	outbound = pow(2, outputNum);
+// 	for (int i = 0; i < inbound; i++) {
+// 		lineStr = "";
+// 		eint = rand() % outbound;
+// 		buffer = bitset<1024>(i).to_string();
+// 		for (int j = 0; j < inputNum; j++)
+// 			lineStr += buffer.at(1024 - inputNum + j);
+// 		buffer = bitset<1024>(eint).to_string();
+// 		for (int j = 0; j < outputNum; j++)
+// 			lineStr += buffer.at(1024 - outputNum + j);
+// 		tableStr->insert(tableStr->end(), lineStr);
+// 	}
+// 	return tableStr;
+// }
+// void TruthTable::permute(int num) {
+// 	int line1, line2;
+// 	int inbound;
+// 	inbound = pow(2, inputNum);
 
-	//for (int j = 0; j < num; j++) {
-	//	line1 = rand() % inbound;
-	//	do {
-	//		line2 = rand() % inbound;
-	//	} while (line1 == line2);
-	//	auto itr1 = table->begin();
-	//	for (int i = 0; i < line1; i++)
-	//		itr1++;
-	//	auto itr2{ table->begin() };
-	//	for (int i = 0; i < line2; i++)
-	//		itr2++;
-	//	(*itr1).swap(*itr2);
-	//}
-}
+// 	//for (int j = 0; j < num; j++) {
+// 	//	line1 = rand() % inbound;
+// 	//	do {
+// 	//		line2 = rand() % inbound;
+// 	//	} while (line1 == line2);
+// 	//	auto itr1 = table->begin();
+// 	//	for (int i = 0; i < line1; i++)
+// 	//		itr1++;
+// 	//	auto itr2{ table->begin() };
+// 	//	for (int i = 0; i < line2; i++)
+// 	//		itr2++;
+// 	//	(*itr1).swap(*itr2);
+// 	//}
+// }
 
-Circuit::Circuit(const Circuit& C) {
-	if (&C != this) {
-		if (this->value != nullptr)
-			delete value;
-		name = "CC" + C.name;
-		key = C.key;
-		value = new TruthTable(*(C.value));
-	}
-	else
-		cout << "construct by itself\n";
-	cout << "copy constrctor\n";
-}
-void Circuit::operator=(const Circuit& C) {
-	if (&C != this) {
-		if (this->value != nullptr)
-			delete value;
-		name = "CA" + C.name;
-		key = C.key;
-		value = new TruthTable(*(C.value));
-	}
-	else
-		cout << "Assign to itself\n";
-	cout << "copy assignment\n";
-}
-Circuit::Circuit(Circuit&& C) {
-	if (&C != this) {
-		if (this->value != nullptr) {
-			delete value;
-		}
-		name = "MC" + C.name;
-		key = C.key;
-		value = C.value;
-		C.value = nullptr;
-	}
-	else
-		cout << "construct by itself\n";
-	cout << "move constructor\n";
-}
-void Circuit::operator=(Circuit&& C) {
-	if (&C != this) {
-		if (this->value != nullptr) {
-			delete value;
-		}
-		name = "MA" + C.name;
-		key = C.key;
-		value = C.value;
-		C.value = nullptr;
-	}
-	else
-		cout << "Assign to itself\n";
-	cout << "move assignment\n";
+// Circuit::Circuit(const Circuit& C) {
+// 	if (&C != this) {
+// 		if (this->value != nullptr)
+// 			delete value;
+// 		name = "CC" + C.name;
+// 		key = C.key;
+// 		value = new TruthTable(*(C.value));
+// 	}
+// 	else
+// 		cout << "construct by itself\n";
+// 	cout << "copy constrctor\n";
+// }
+// void Circuit::operator=(const Circuit& C) {
+// 	if (&C != this) {
+// 		if (this->value != nullptr)
+// 			delete value;
+// 		name = "CA" + C.name;
+// 		key = C.key;
+// 		value = new TruthTable(*(C.value));
+// 	}
+// 	else
+// 		cout << "Assign to itself\n";
+// 	cout << "copy assignment\n";
+// }
+// Circuit::Circuit(Circuit&& C) {
+// 	if (&C != this) {
+// 		if (this->value != nullptr) {
+// 			delete value;
+// 		}
+// 		name = "MC" + C.name;
+// 		key = C.key;
+// 		value = C.value;
+// 		C.value = nullptr;
+// 	}
+// 	else
+// 		cout << "construct by itself\n";
+// 	cout << "move constructor\n";
+// }
+// void Circuit::operator=(Circuit&& C) {
+// 	if (&C != this) {
+// 		if (this->value != nullptr) {
+// 			delete value;
+// 		}
+// 		name = "MA" + C.name;
+// 		key = C.key;
+// 		value = C.value;
+// 		C.value = nullptr;
+// 	}
+// 	else
+// 		cout << "Assign to itself\n";
+// 	cout << "move assignment\n";
 
-}
-Circuit Circuit::invert() {
-	Circuit tp{*this};
-	return move(tp);
-}
+// }
+// Circuit Circuit::invert() {
+// 	Circuit tp{*this};
+// 	return move(tp);
+// }
 
-void Circuit::generateKey(){
-	string object{""};
-	map<int, map<int, int>> keyMap;
-	// initialize with 0s
-	for (int i=0; i<=value->getIn(); i++) {
-		for (int j=0; j<=value->getOut(); j++) {
-			keyMap[i].insert({j, 0});
-		}
-	}
-	// counting 1s
-	int inputCount{0}, outputCount{0}, repetition;
-	for (int j=0; j<pow(2, value->getIn()); j++) {
-		auto line = value->getRow(j);
-		int i = 0;
-		inputCount = 0;
-		outputCount = 0;
-		for (auto e: line) {
-			if (i<value->getIn()) {
-				if (e == true) inputCount++;
-			}
-			else {
-				if (e == true) outputCount++;
-			}
-			i++;
-		}
-		repetition = keyMap[inputCount][outputCount];
-		keyMap[inputCount].erase(outputCount);
-		keyMap[inputCount].insert({outputCount, ++repetition});
+// void Circuit::generateKey(){
+// 	string object{""};
+// 	map<int, map<int, int>> keyMap;
+// 	// initialize with 0s
+// 	for (int i=0; i<=value->getIn(); i++) {
+// 		for (int j=0; j<=value->getOut(); j++) {
+// 			keyMap[i].insert({j, 0});
+// 		}
+// 	}
+// 	// counting 1s
+// 	int inputCount{0}, outputCount{0}, repetition;
+// 	for (int j=0; j<pow(2, value->getIn()); j++) {
+// 		auto line = value->getRow(j);
+// 		int i = 0;
+// 		inputCount = 0;
+// 		outputCount = 0;
+// 		for (auto e: line) {
+// 			if (i<value->getIn()) {
+// 				if (e == true) inputCount++;
+// 			}
+// 			else {
+// 				if (e == true) outputCount++;
+// 			}
+// 			i++;
+// 		}
+// 		repetition = keyMap[inputCount][outputCount];
+// 		keyMap[inputCount].erase(outputCount);
+// 		keyMap[inputCount].insert({outputCount, ++repetition});
 
-	}
-	// convert to plain string
-	for (auto& in: keyMap) {
-		object += to_string(in.first);
-		for (auto& rep: in.second) {
-			object += to_string(rep.first);
-			object += to_string(rep.second);
-		}
-	}
-	key = object;
-}
-list<string>* Circuit::fetchFile(ifstream& file) {
-	string line;
-	list<bool> linein;
-	list<string>* tableStr = new list<string>();
-	int inputN, outputN, count;
-	string nameN;
-	getline(file, line);
-	nameN = line;
-	getline(file, line);
-	inputN = stoi(line);
-	getline(file, line);
-	outputN = stoi(line);
+// 	}
+// 	// convert to plain string
+// 	for (auto& in: keyMap) {
+// 		object += to_string(in.first);
+// 		for (auto& rep: in.second) {
+// 			object += to_string(rep.first);
+// 			object += to_string(rep.second);
+// 		}
+// 	}
+// 	key = object;
+// }
+// list<string>* Circuit::fetchFile(ifstream& file) {
+// 	string line;
+// 	list<bool> linein;
+// 	list<string>* tableStr = new list<string>();
+// 	int inputN, outputN, count;
+// 	string nameN;
+// 	getline(file, line);
+// 	nameN = line;
+// 	getline(file, line);
+// 	inputN = stoi(line);
+// 	getline(file, line);
+// 	outputN = stoi(line);
 
-	count = 0;
-	while (getline(file, line)) {
-		if (count >= pow(2, inputN)) break;
-		tableStr->insert(tableStr->end(), line);
-		count++;
-	}
-	name = 'F' + to_string(rand() % 9000 + 1000); // 1000-9999
-	return tableStr;
-}
-Circuit::Circuit(const initializer_list<int>& L) {
-	name = 'I' + to_string(rand() % 9000 + 1000); // 1000-9999
-	value = new TruthTable(L);
-	generateKey();
-}
+// 	count = 0;
+// 	while (getline(file, line)) {
+// 		if (count >= pow(2, inputN)) break;
+// 		tableStr->insert(tableStr->end(), line);
+// 		count++;
+// 	}
+// 	name = 'F' + to_string(rand() % 9000 + 1000); // 1000-9999
+// 	return tableStr;
+// }
+// Circuit::Circuit(const initializer_list<int>& L) {
+// 	name = 'I' + to_string(rand() % 9000 + 1000); // 1000-9999
+// 	value = new TruthTable(L);
+// 	generateKey();
+// }
 
-Circuit::Circuit(const int in, const int out) {
-	name = 'R' + to_string(rand() % 9000 + 1000); // 1000-9999
-	value = new TruthTable(in, out);
-	generateKey();
-}
+// Circuit::Circuit(const int in, const int out) {
+// 	name = 'R' + to_string(rand() % 9000 + 1000); // 1000-9999
+// 	value = new TruthTable(in, out);
+// 	generateKey();
+// }
 
-Circuit::Circuit() {
-	name = "D0000";
-	key = "";
-	value = new TruthTable();
-}
+// Circuit::Circuit() {
+// 	name = "D0000";
+// 	key = "";
+// 	value = new TruthTable();
+// }
 
-Circuit::Circuit(const string nameC, TruthTable* const &data){
-	name = nameC;
-	value = data;
-	generateKey();
-}
-Circuit::Circuit(ifstream& file){
-	if (!file.is_open()) {
-		cout << "File is not open" << endl;
-		Circuit();
-		return;
-	}
-	list<string>* temp = fetchFile(file);
-	Add(temp);
-	generateKey();
-}
+// Circuit::Circuit(const string nameC, TruthTable* const &data){
+// 	name = nameC;
+// 	value = data;
+// 	generateKey();
+// }
+// Circuit::Circuit(ifstream& file){
+// 	if (!file.is_open()) {
+// 		cout << "File is not open" << endl;
+// 		Circuit();
+// 		return;
+// 	}
+// 	list<string>* temp = fetchFile(file);
+// 	Add(temp);
+// 	generateKey();
+// }
 
 //// Your program will read in circuits and the operations from the file “input.txt”.
 //// You will implement the following three functions:

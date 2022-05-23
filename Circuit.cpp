@@ -8,7 +8,7 @@
 #include <bitset>
 #include <ctime>
 
-#include "component.h"
+#include "Circuit.h"
 using namespace std;
 
 Circuit::Circuit(const Circuit& C) {
