@@ -2,6 +2,9 @@
 - Designed hierarchy data structure, bottom-up from truth table, circuit to database
 - Included bit set manipulation, smart-pointer based truth table
 - File I/O included for truth table reading and output writing
+- Smart pointer included as the basic unit of truth table
+- Copy, move constructor, assignment is included in the project
+
 ## Introduction
 Database of circuits is based on hashmap provided by STL library, 
 the key part is a string produced by each identical circuit, 
@@ -25,8 +28,260 @@ is finished as every row is iterated by the algorithm. Next step is converting
 this data structure to plain string as string key.
 
 ## Architecture
-|Main|
-|---|
-||
+The working flow of the program is provided as table below:
+|Main||
+|:---:|:---:|
+|↓|↓|
+|Database| test|
+|↓|
+|Circuit|
+|↓|
+|TruthTable|
+|↓|
+|Node|
 <!-- ← → ↑ ↓ -->
-## Example output
+<details>
+ <summary>Example output</summary>
+
+```
+R7761
+3
+5
+000 11101
+001 10011
+010 10101
+011 10011
+100 11111
+101 10110
+110 01110
+111 00001
+R2068
+2
+2
+00 01
+01 10
+10 00
+11 10
+F6699
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+F6004
+3
+2
+000 10
+010 00
+011 11
+100 00
+001 00
+101 11
+111 11
+110 01
+Add
+R7761
+3
+5
+000 11101
+001 10011
+010 10101
+011 10011
+100 11111
+101 10110
+110 01110
+111 00001
+Circuit R7761 is added to the database.
+
+Delete
+R7761
+3
+5
+000 11101
+001 10011
+010 10101
+011 10011
+100 11111
+101 10110
+110 01110
+111 00001
+Circuit R7761 has a re-useable circuit, in the database, whose truth table is shown below.
+3
+5
+000 11101
+001 10011
+010 10101
+011 10011
+100 11111
+101 10110
+110 01110
+111 00001
+Circuit R7761 is deleted from the database.
+
+Add
+Circuit does not existed on memory.
+Add
+F6699
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+Circuit F6699 is added to the database.
+
+Add
+F6699
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+Circuit F6699 is not added.It has a re-useable circuit, in the database, whose truth table is shown below.
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+
+Add
+F6004
+3
+2
+000 10
+010 00
+011 11
+100 00
+001 00
+101 11
+111 11
+110 01
+Circuit F6004 is not added.It has a re-useable circuit, in the database, whose truth table is shown below.
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+
+Find
+F6699
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+Circuit F6699 has a re-useable circuit, in the database, whose truth table is shown below.
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+
+Find
+F6004
+3
+2
+000 10
+010 00
+011 11
+100 00
+001 00
+101 11
+111 11
+110 01
+Circuit F6004 has a re-useable circuit, in the database, whose truth table is shown below.
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+
+Delete
+F8505
+3
+2
+000 10
+010 00
+011 10
+001 00
+100 00
+111 11
+101 11
+110 01
+Circuit F8505 has a re-useable circuit, in the database, whose truth table is shown below.
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+Circuit F8505 is deleted from the database.
+
+Delete
+F6699
+3
+2
+000 10
+001 00
+010 00
+011 10
+100 00
+101 11
+110 01
+111 11
+Circuit F6699 does not have any re-useable circuit in the database.
+
+Database contains 0 circuits.
+
+```
+</details>
+
+## Acknowledge
+- Professor Roger Chen provide the print format for the homework project \
+https://ecs.syracuse.edu/faculty-staff/c-y-roger-chen
+- Abel Getahun Armede shares his idea of identifying unique combinational circuit
+
+

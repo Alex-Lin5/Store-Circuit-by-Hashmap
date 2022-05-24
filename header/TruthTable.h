@@ -1,12 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <unordered_map>
-#include <list>
-#include <map>
-#include <cmath>
-#include <bitset>
-#include <ctime>
+#pragma once
+
+#ifndef TRUTHTABLE_H
+#define TRUTHTABLE_H
+using namespace std;
 
 class Node {
 private:
@@ -14,12 +10,12 @@ private:
 	weak_ptr<Node> down;
 	bool value;
 public:
-	Node(){ value = NULL;}
-	Node(bool data){ value = data; right.reset(); down.reset(); }
+	Node() { value = NULL; }
+	Node(bool data) { value = data; right.reset(); down.reset(); }
 	//~Node(){ value = NULL;}
-	bool get(){ return value;}
-	void setR(shared_ptr<Node> theNode) { this->right = theNode; }
-	void setD(shared_ptr<Node> theNode) { this->down = theNode; }
+	bool get() { return value; }
+	inline void setR(shared_ptr<Node> theNode) { this->right = theNode; }
+	inline void setD(shared_ptr<Node> theNode) { this->down = theNode; }
 	shared_ptr<Node> getR() { return right; }
 	shared_ptr<Node> getD() { return down.lock(); }
 };
@@ -43,17 +39,22 @@ public:
 	TruthTable();
 	TruthTable(const initializer_list<int>& L);
 	TruthTable(list<string>* const tableString);
-	TruthTable (const int in, const int out);
+	TruthTable(const int in, const int out);
 	~TruthTable() { entry.reset(); }
 	TruthTable(const TruthTable& T);
 	void operator=(const TruthTable& T);
 
-	shared_ptr<Node> getEntry() { return entry;}
+	shared_ptr<Node> getEntry() { return entry; }
 	int getIn() { return inputNum; }
 	int getOut() { return outputNum; }
 	vector<bool> getRow(const int num);
 	vector<bool> getCol(const int num);
+	friend ostream& operator<<(ostream& str, TruthTable& const T);
 	//void setEntry(shared_ptr<Node> node) { entry = node;}
 	//bool get(int row, int col);
 };
+
+
+#endif // !TRUTH_TABLE_H
+
 

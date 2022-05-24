@@ -11,6 +11,27 @@
 #include "TruthTable.h"
 using namespace std;
 
+ostream& operator<<(ostream& str, TruthTable& const T) {
+	int inNum{ T.getIn() };
+	int outNum{ T.getOut() };
+	int lineWidth{ inNum + outNum };
+	auto pt{ T.getEntry() };
+
+	int index{ 1 };
+	str << inNum << '\n' << outNum << '\n';
+	while (pt->getR() != nullptr) {
+		str << pt->get();
+		int rem{ index % lineWidth };
+		if (rem == inNum)
+			str << " ";
+		else if (rem == 0)
+			str << "\n";
+		index++;
+		pt = pt->getR();
+	}
+	return str;
+}
+
 TruthTable::TruthTable(){ 
 	entry = make_shared<Node>();
 	inputNum = outputNum = 0; 
@@ -39,8 +60,6 @@ TruthTable::TruthTable(list<string>* const tableString) {
 	toTable(tableString);
 }
 void TruthTable::operator=(const TruthTable& T) {
-	//*this = new TruthTable(T);
-	//TruthTable(T);
 	inputNum = T.inputNum;
 	outputNum = T.outputNum;
 	vector<bool> table;

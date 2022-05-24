@@ -11,6 +11,13 @@
 #include "Circuit.h"
 using namespace std;
 
+ostream& operator<<(ostream& str, Circuit& const C) {
+	if (&C == nullptr) return str;
+	str << C.getName() << endl;
+	str << *(C.getValue());
+	return str;
+}
+
 Circuit::Circuit(const Circuit& C) {
 	if (&C != this) {
 		if (this->value != nullptr)
