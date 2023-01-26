@@ -6,14 +6,8 @@
 - Copy, move constructor, assignment is included in the project
 
 ## Introduction
-Database of circuits is based on hashmap provided by STL library, 
-the key part is a string produced by each identical circuit, 
-the value part stores single circuit including turthtable and circuit name.
-
-For equivlent circuits, reconnecting the input ports and output ports does not 
-require a new combinational circuit design. As for the truth table,
-the input colomuns or the output colomuns can be swaped without limitation, except
-swaping between input and output ports.
+Database of circuits is based on hashmap provided by STL library, the key part is a string produced by each identical circuit, the value part stores single circuit including turthtable and circuit name.
+For equivlent circuits, reconnecting the input ports and output ports does not require a new combinational circuit design. As for the truth table, the input colomuns or the output colomuns can be swaped without limitation, except swaping between input and output ports.
 
 **Key generation**
 
